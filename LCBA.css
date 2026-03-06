@@ -1,0 +1,14 @@
+.tab-container {
+  display: flex; /* Enables flexbox properties for the container */
+  justify-content: center; /* Centers the child elements horizontally */
+  /* Add other styling for appearance, e.g., border, background, padding */
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+}
+
+.tab-link {
+  /* Add styling for individual links */
+  padding: 9px 10px;
+  text-decoration: none;
+  /* ... other styles */
+}

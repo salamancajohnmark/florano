@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="Task3_W13CSS_Florano.css">
+<title>Responsive Web Design Layout</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial;
+  padding: 10px;
+  background: #f1f1f1;
+}
+
+/* Header */
+.header {
+  padding: 50ppx;
+  text-align: center;
+  background: white;
+}
+
+.header h1 {
+  font-size: 50px;
+}
+
+/* Navigation bar */
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+/* Navigation links */
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Hover effect */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Columns */
+.leftcolumn {
+  float: left;
+  width: 75%;
+}
+
+.rightcolumn {
+  float: left;
+  width: 25%;
+  background-color: #f1f1f1;
+  padding-left: 20px;
+}
+
+/* Card */
+.card {
+  background-color: white;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+/* Clear floats */
+.row::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Footer */
+.footer {
+  padding: 20px;
+  text-align: center;
+  background: #ddd;
+  margin-top: 20px;
+}
+
+/* Responsive layout */
+@media screen and (max-width: 800px) {
+  .leftcolumn, .rightcolumn {
+    width: 100%;
+    padding: 0;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .topnav a {
+    float: none;
+    width: 100%;
+  }
+}
+</style>
+</head>
+
+<body onload="startGame()">
+
+<div class="header">
+        <br>
+      <button onmousedown="accelerate(0.2)" onmouseup="accelerate(0.05)">
+        ACCELERATE
+      </button>
+      <p>Use the thank accelerate button to stay in the air.</p>
+</div>
+
+<div class="topnav">
+  <a href="#">Sub Page 1</a>
+  <a href="#">Sub Page 2</a>
+  <a href="#">Link</a>
+  <a href="#" style="float: right">Link</a>
+</div>
+
+<div class="row">
+      <div id="game"></div>
+  </div>
+</div>
+
+
+<div class="footer">
+  <h2>Footer</h2>
+</div>
+
+<script>
+var myGamePiece;
+var myObstacles = [];
+var myScore;
+
+function startGame() {
+  myGamePiece = new component(30, 30, "red", 10, 120);
+  myGamePiece.gravity = 0.05;
+  myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+  myGameArea.start();
+}
+
+var myGameArea = {
+  canvas: document.createElement("canvas"),
+  start: function() {
+    this.canvas.width = 480;
+    this.canvas.height = 270;
+    this.context = this.canvas.getContext("2d");
+    document.getElementById("game").appendChild(this.canvas);
+    this.frameNo = 0;
+    this.interval = setInterval(updateGameArea, 20);
+  },
+  clear: function() {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+}
+
+function component(width, height, color, x, y, type) {
+  this.type = type;
+  this.score = 0;
+  this.width = width;
+  this.height = height;
+  this.speedX = 0;
+  this.speedY = 0;
+  this.x = x;
+  this.y = y;
+  this.gravity = 0;
+  this.gravitySpeed = 0;
+
+  this.update = function() {
+    ctx = myGameArea.context;
+    if (this.type == "text") {
+      ctx.font = this.width + " " + this.height;
+      ctx.fillStyle = color;
+      ctx.fillText(this.text, this.x, this.y);
+    } else {
+      ctx.fillStyle = color;
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+  }
+
+  this.newPos = function() {
+    this.gravitySpeed += this.gravity;
+    this.x += this.speedX;
+    this.y += this.speedY + this.gravitySpeed;
+    this.hitBottom();
+  }
+
+  this.hitBottom = function() {
+    var rockbottom = myGameArea.canvas.height - this.height;
+    if (this.y > rockbottom) {
+      this.y = rockbottom;
+      this.gravitySpeed = 0;
+    }
+  }
+
+  this.crashWith = function(otherobj) {
+    var myleft = this.x;
+    var myright = this.x + this.width;
+    var mytop = this.y;
+    var mybottom = this.y + this.height;
+    var otherleft = otherobj.x;
+    var otherright = otherobj.x + otherobj.width;
+    var othertop = otherobj.y;
+    var otherbottom = otherobj.y + otherobj.height;
+    var crash = true;
+
+    if ((mybottom < othertop) ||
+        (mytop > otherbottom) ||
+        (myright < otherleft) ||
+        (myleft > otherright)) {
+      crash = false;
+    }
+    return crash;
+  }
+}
+
+function updateGameArea() {
+  var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+
+  for (i = 0; i < myObstacles.length; i += 1) {
+    if (myGamePiece.crashWith(myObstacles[i])) {
+      return;
+    }
+  }
+
+  myGameArea.clear();
+  myGameArea.frameNo += 1;
+
+  if (myGameArea.frameNo == 1 || everyinterval(150)) {
+    x = myGameArea.canvas.width;
+    minHeight = 20;
+    maxHeight = 200;
+    height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+    minGap = 50;
+    maxGap = 200;
+    gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
+    myObstacles.push(new component(10, height, "green", x, 0));
+    myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
+  }
+
+  for (i = 0; i < myObstacles.length; i += 1) {
+    myObstacles[i].x += -1;
+    myObstacles[i].update();
+  }
+
+  myScore.text = "SCORE: " + myGameArea.frameNo;
+  myScore.update();
+  myGamePiece.newPos();
+  myGamePiece.update();
+}
+
+function everyinterval(n) {
+  if ((myGameArea.frameNo / n) % 1 == 0) {
+    return true;
+  }
+  return false;
+}
+
+function accelerate(n) {
+  myGamePiece.gravity = n;
+}
+</script>
+
+</body>
+</html>

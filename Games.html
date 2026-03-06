@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Responsive Web Design Layout with Quiz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#333;
+}
+
+/* Header */
+.header{
+  padding:40px;
+  text-align:center;
+  background:linear-gradient(90deg,#1565c0,#42a5f5);
+  color:white;
+  box-shadow:0 4px 15px rgba(0,0,0,0.3);
+}
+.header p{font-size:35px;font-weight:600;margin:0;letter-spacing:2px;}
+
+/* Navigation */
+.topnav{
+  overflow:hidden;
+  background:#111;
+  display:flex;
+  justify-content:center;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+}
+.topnav a{
+  color:white;
+  text-align:center;
+  padding:14px 22px;
+  text-decoration:none;
+  font-weight:500;
+  transition:0.3s;
+}
+.topnav a:hover{
+  background:#42a5f5;
+  border-radius:6px;
+}
+
+/* Layout */
+.row{
+  width:90%;
+  max-width:900px;
+  margin:auto;
+  margin-top:20px;
+}
+
+.leftcolumn{
+  width:100%;
+}
+
+/* Cards */
+.card{
+  background:white;
+  padding:25px;
+  margin-top:20px;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+  text-align:center;
+  font-size:22px;
+  font-weight:600;
+  color:#1565c0;
+}
+
+/* Game/Quiz Styles */
+#game{
+  background:#f5f9ff;
+  border-radius:12px;
+  margin-top:20px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.2);
+  padding:20px;
+  text-align:left;
+}
+
+.quiz-question{
+  font-weight:600;
+  margin-bottom:15px;
+  color:#1565c0;
+}
+.quiz-options button{
+  display:block;
+  width:100%;
+  margin:8px 0;
+  padding:10px;
+  font-size:16px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.quiz-options button:hover{
+  background:#42a5f5;
+  color:white;
+}
+#quiz-result{
+  margin-top:15px;
+  font-size:18px;
+  font-weight:600;
+  color:green;
+}
+
+/* Footer */
+.footer{
+  padding:25px;
+  text-align:center;
+  background:linear-gradient(90deg,#1565c0,#42a5f5);
+  margin-top:30px;
+  color:white;
+  font-weight:500;
+}
+
+/* Responsive */
+@media screen and (max-width:500px){
+  .topnav{
+    flex-direction:column;
+  }
+  .topnav a{
+    border-top:1px solid rgba(255,255,255,0.2);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<p>Project TVL-HE</p>
+</div>
+
+<div class="topnav">
+    <a href="http://localhost:8158/Project.html">Menu</a>
+  <a href="http://localhost:8158/LCBA.html">About LCBA</a>
+  <a href="http://localhost:8158/TVL-HE.html">TVL-HE</a>
+  <a href="http://localhost:8158/Image Gallery.html">Image Gallery</a>
+  <a href="http://localhost:8158/Video gallery.html">Video Gallery</a>
+  <a href="http://localhost:8158/Games.html" style="float:right">Games</a>
+</div>
+
+<div class="row">
+
+<div class="leftcolumn">
+
+<div class="card">
+TVL-HE
+</div>
+
+<div id="game" class="card">
+<h3>Quiz Time!</h3>
+<div class="quiz-question" id="question">Loading question...</div>
+<div class="quiz-options" id="options"></div>
+<div id="quiz-result"></div>
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+<h2>Project</h2>
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "What does TVL stand for in SHS?",
+    options: ["Technical-Vocational-Livelihood", "Technology-Vision-Learning", "Teaching-Vocational-Lab"],
+    answer: "Technical-Vocational-Livelihood"
+  },
+  {
+    question: "Which subject teaches cooking and baking?",
+    options: ["Agri-Fishery Arts", "Home Economics", "Industrial Arts"],
+    answer: "Home Economics"
+  },
+  {
+    question: "What is the main goal of TVL-HE track?",
+    options: ["Prepare for college", "Prepare for employment and livelihood", "Prepare for sports"],
+    answer: "Prepare for employment and livelihood"
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function loadQuestion(){
+  document.getElementById("quiz-result").innerText="";
+  let q = quizData[currentQuestion];
+  document.getElementById("question").innerText = q.question;
+  
+  let optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  
+  q.options.forEach(opt => {
+    let btn = document.createElement("button");
+    btn.innerText = opt;
+    btn.onclick = () => checkAnswer(opt);
+    optionsDiv.appendChild(btn);
+  });
+}
+
+function checkAnswer(selected){
+  if(selected === quizData[currentQuestion].answer){
+    score++;
+    document.getElementById("quiz-result").innerText = "Correct!";
+  } else{
+    document.getElementById("quiz-result").innerText = "Wrong! Correct: " + quizData[currentQuestion].answer;
+  }
+  
+  currentQuestion++;
+  if(currentQuestion < quizData.length){
+    setTimeout(loadQuestion,1500);
+  } else{
+    setTimeout(() => {
+      document.getElementById("game").innerHTML = "<h3>Quiz Finished!</h3><p>Your Score: " + score + "/" + quizData.length + "</p>";
+    },1500);
+  }
+}
+
+// Start the quiz
+loadQuestion();
+</script>
+
+</body>
+</html>
